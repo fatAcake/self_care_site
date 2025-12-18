@@ -1,0 +1,167 @@
+.App {
+  font-family: sans-serif;
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Стили для верхнего блока прогресса */
+.progress-section {
+  background-color: #ddd;
+  color: black;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+}
+
+.progress-header {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.progress-subheader {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.progress-value {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+/* Стили для блока добавления привычки */
+.add-habit-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ddd;
+  color: black;
+  padding: 15px 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.add-habit-section span {
+  font-size: 18px;
+}
+
+.add-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: black;
+}
+
+/* Стили для списка привычек */
+.habits-list {
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ddd;
+  color: black;
+  padding: 15px 20px;
+  border-radius: 8px;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.checkbox.empty {
+  background-color: transparent;
+}
+
+.checkbox.checked {
+  background-color: #333;
+  border-color: #333;
+}
+
+.checkbox.checked::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.checkbox.with-badge {
+  position: relative;
+}
+
+.checkbox.with-badge .badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #4CAF50;
+  /* Зеленый цвет */
+  color: white;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* Стили для нижней навигации */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  width: 90%;
+  max-width: 500px;
+  margin-top: auto;
+  padding: 10px 0;
+}
+
+.nav-button {
+  background-color: #ddd;
+  color: black;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  flex: 1;
+  margin: 0 5px;
+  text-align: center;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+  .App {
+    padding: 10px;
+  }
+
+  .progress-section,
+  .add-habit-section,
+  .habits-list,
+  .bottom-nav {
+    width: 100%;
+  }
+
+  .progress-value {
+    font-size: 28px;
+  }
+}
