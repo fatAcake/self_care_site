@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApplication2.Models;
+namespace Self_care.Models;
 
 [Table("habits")]
 public partial class Habit

@@ -1,35 +1,128 @@
-namespace WebApplication2
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Self_care.Data;
+using Self_care.Services;
+using Self_care.Models;
+using System;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Bind strongly-typed JWT settings
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
+    ?? throw new InvalidOperationException("JWT configuration section is missing.");
+
+// Add services to the container.
+
+// PostgreSQL Connection
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+builder.Services.AddDbContext<SelfCareDB>(options =>
+    options.UseNpgsql(connectionString));
+
+// JWT Authentication
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
+
+builder.Services.AddAuthentication(options =>
 {
-    public class Program
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = signingKey,
+        // Reduce default clock skew to minimize token lifetime surprises
+        ClockSkew = TimeSpan.FromMinutes(2)
+    };
+});
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+// Register TokenService (scoped — stateless but depends on configuration)
+builder.Services.AddScoped<TokenService>();
 
-            var app = builder.Build();
+// CORS for React frontend (Vite dev server)
+// Allow the Vite dev server (5173) and local Kestrel ports
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("self_care_site_front", policy =>
+//    {
+//        policy.WithOrigins(
+//                "http://localhost:5173",
+//                "http://localhost:5000",
+//                "https://localhost:5001")
+//              .AllowAnyHeader()
+//              .AllowAnyMethod();
+//    });
+//});
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+// Controllers
+builder.Services.AddControllers();
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
+// Swagger/OpenAPI with JWT bearer support
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SelfCare API", Version = "v1" });
 
-            app.UseAuthorization();
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer {token}'"
+    };
+    c.AddSecurityDefinition("Bearer", securityScheme);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, Array.Empty<string>() }
+    });
+});
 
-            app.MapStaticAssets();
-            app.MapControllerRoute(
-                 name: "default",
-                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapFallbackToController("Index", "Home");
-            app.Run();
-        }
-    }
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy =
+        System.Text.Json.JsonNamingPolicy.CamelCase;
+});
+
+
+var app = builder.Build();
+
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+else
+{
+    app.UseHsts();
+}
+
+//app.UseHttpsRedirection();
+
+// Use CORS before authentication/authorization
+//app.UseCors("SelfCareFrontend");
+app.UseCors(policy => policy
+    .WithOrigins("http://localhost:5173")
+    .AllowAnyHeader()
+    .AllowAnyMethod());
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

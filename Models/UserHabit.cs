@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApplication2.Models;
+namespace Self_care.Models;
 
 [Table("user_habits")]
 [Index("HabitId", Name = "idx_user_habits_habit_id")]
