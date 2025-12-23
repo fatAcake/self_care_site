@@ -1,0 +1,159 @@
+/* src/pages/AuthPage.css */
+.auth-container {
+    background: #0f0715;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+    /* јбстрактные фиолетовые линии Ч можно добавить как SVG или псевдоэлементы */
+    .auth-container::before {
+        content: '';
+        position: absolute;
+        top: -10%;
+        right: -10%;
+        width: 60%;
+        height: 60%;
+        border: 2px solid #5c288a;
+        border-radius: 50%;
+        opacity: 0.3;
+        z-index: -1;
+    }
+
+    .auth-container::after {
+        content: '';
+        position: absolute;
+        bottom: -10%;
+        left: -10%;
+        width: 60%;
+        height: 60%;
+        border: 2px solid #5c288a;
+        border-radius: 50%;
+        opacity: 0.3;
+        z-index: -1;
+    }
+
+.auth-header {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: white;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+    .tab.active {
+        border-bottom: 2px solid white;
+        color: #d9b3ff;
+    }
+
+.auth-form {
+    background: #2a1340;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 2px solid #5c288a;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: #3d1a5d;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.icon {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+    color: #d9b3ff;
+}
+
+.input-group input {
+    background: transparent;
+    border: none;
+    color: white;
+    flex: 1;
+    font-size: 1rem;
+    outline: none;
+    padding: 0.5rem 0;
+}
+
+    .input-group input::placeholder {
+        color: #a380c9;
+    }
+
+.submit-btn {
+    width: 100%;
+    background: #8a4aff;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 1.5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 1rem;
+}
+
+    .submit-btn:hover {
+        background: #7a3ae5;
+    }
+
+.social-login {
+    margin-top: 2rem;
+    text-align: center;
+    color: white;
+}
+
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 0.75rem;
+    background: #5c288a;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+    .social-btn:hover {
+        transform: scale(1.05);
+    }
+
+    .social-btn.yandex {
+        background: #ffc900; 
+        color: #000;
+    }
+
+    .social-btn.google {
+        background: #fff;
+        color: #000;
+    }

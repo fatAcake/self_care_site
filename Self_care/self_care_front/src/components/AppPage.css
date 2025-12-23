@@ -1,0 +1,18 @@
+.app-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0d2e 0%, #2d1b4e 100%);
+    color: white;
+    padding-bottom: 100px; 
+}
+
+.app-content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.app-content h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
