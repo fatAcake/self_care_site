@@ -15,14 +15,20 @@ var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
     ?? throw new InvalidOperationException("JWT configuration section is missing.");
 
 
-// Получаем ConnectionString с логированием для отладки
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Получаем ConnectionString - сначала из переменной окружения, потом из конфигурации
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
 var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
 var logger = loggerFactory.CreateLogger<Program>();
 
 if (string.IsNullOrEmpty(connectionString))
 {
     logger.LogError("Connection string 'DefaultConnection' not found!");
+    logger.LogError("Environment variable ConnectionStrings__DefaultConnection: {EnvVar}", 
+        Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? "null");
+    logger.LogError("Configuration ConnectionStrings:DefaultConnection: {Config}", 
+        builder.Configuration.GetConnectionString("DefaultConnection") ?? "null");
     logger.LogError("Available configuration keys: {Keys}", 
         string.Join(", ", builder.Configuration.AsEnumerable().Select(k => k.Key)));
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -31,11 +37,37 @@ if (string.IsNullOrEmpty(connectionString))
 // Логируем ConnectionString (без пароля для безопасности)
 var safeConnectionString = connectionString.Contains("Password=") 
     ? connectionString.Substring(0, connectionString.IndexOf("Password=")) + "Password=***"
-    : connectionString;
+    : (connectionString.Contains("@") 
+        ? connectionString.Substring(0, connectionString.IndexOf("@") + 1) + "***"
+        : connectionString);
 logger.LogInformation("Using ConnectionString: {ConnectionString}", safeConnectionString);
+logger.LogInformation("ConnectionString source: {Source}", 
+    Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") != null ? "Environment Variable" : "Configuration");
+
+// Если ConnectionString в формате URL без порта, добавляем порт
+if (connectionString.StartsWith("postgresql://") && !connectionString.Contains(":5432") && !connectionString.Contains("?"))
+{
+    var atIndex = connectionString.IndexOf("@");
+    var slashIndex = connectionString.IndexOf("/", atIndex);
+    if (atIndex > 0 && slashIndex > atIndex)
+    {
+        connectionString = connectionString.Insert(slashIndex, ":5432");
+        logger.LogInformation("Added port 5432 to ConnectionString");
+    }
+}
+
+// Если ConnectionString в формате URL без sslmode, добавляем его
+if (connectionString.StartsWith("postgresql://") && !connectionString.Contains("sslmode="))
+{
+    connectionString += (connectionString.Contains("?") ? "&" : "?") + "sslmode=require";
+    logger.LogInformation("Added sslmode=require to ConnectionString");
+}
 
 builder.Services.AddDbContext<SelfCareDB>(options =>
-    options.UseNpgsql(connectionString));
+{
+    options.UseNpgsql(connectionString);
+    logger.LogInformation("DbContext configured with ConnectionString");
+});
 
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
 
@@ -97,18 +129,18 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    // try
-    // {
+    try
+    {
         var dbContext = services.GetRequiredService<SelfCareDB>();
         dbContext.Database.Migrate();
-    // }
-    // catch (Exception ex)
-    // {
-    //     var logger = services.GetRequiredService<ILogger<Program>>();
-    //     logger.LogError(ex, "An error occurred while migrating the database.");
-    //     // Не останавливаем приложение, если миграции не применились
-    //     // Это позволит приложению запуститься даже если БД недоступна
-    // }
+    }
+    catch (Exception ex)
+    {
+        var loggeres = services.GetRequiredService<ILogger<Program>>();
+        loggeres.LogError(ex, "An error occurred while migrating the database.");
+        // Не останавливаем приложение, если миграции не применились
+        // Это позволит приложению запуститься даже если БД недоступна
+    }
 }
 
 // CORS configuration - ДОЛЖНО БЫТЬ ПЕРЕД UseAuthentication и UseAuthorization
@@ -120,8 +152,8 @@ if (allowedOrigins.Length == 0)
 }
 
 // Логирование для отладки CORS
-var loggere = app.Services.GetRequiredService<ILogger<Program>>();
-loggere.LogInformation("CORS: Allowed origins: {Origins}", string.Join(", ", allowedOrigins));
+var loggerу = app.Services.GetRequiredService<ILogger<Program>>();
+loggerу.LogInformation("CORS: Allowed origins: {Origins}", string.Join(", ", allowedOrigins));
 
 app.UseCors(policy => policy
     .WithOrigins(allowedOrigins)
