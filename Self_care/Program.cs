@@ -77,6 +77,24 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 var app = builder.Build();
 
+// Автоматическое применение миграций при старте (для Render без Shell)
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<SelfCareDB>();
+        dbContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+        // Не останавливаем приложение, если миграции не применились
+        // Это позволит приложению запуститься даже если БД недоступна
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
