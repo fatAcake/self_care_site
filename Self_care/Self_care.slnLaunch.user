@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Новый профиль",
+    "Projects": [
+      {
+        "Path": "self_care_front\\self_care_front.esproj",
+        "Action": "Start",
+        "DebugTarget": "localhost (Edge)"
+      },
+      {
+        "Path": "Self_care\\Self_care.csproj",
+        "Action": "Start",
+        "DebugTarget": "Self_care"
+      }
+    ]
+  }
+]
