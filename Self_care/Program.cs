@@ -16,19 +16,26 @@ var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
 
 
 // Получаем ConnectionString - сначала из переменной окружения, потом из конфигурации
-var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
-
 var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
 var logger = loggerFactory.CreateLogger<Program>();
+
+// Логируем все переменные окружения, связанные с ConnectionStrings
+var envVar = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+var configVar = builder.Configuration.GetConnectionString("DefaultConnection");
+
+logger.LogInformation("=== ConnectionString Debug ===");
+logger.LogInformation("Environment variable 'ConnectionStrings__DefaultConnection': {EnvVar}", 
+    string.IsNullOrEmpty(envVar) ? "NULL or EMPTY" : $"FOUND (length: {envVar.Length})");
+logger.LogInformation("Configuration 'ConnectionStrings:DefaultConnection': {Config}", 
+    string.IsNullOrEmpty(configVar) ? "NULL or EMPTY" : $"FOUND (length: {configVar.Length})");
+
+var connectionString = envVar ?? configVar;
 
 if (string.IsNullOrEmpty(connectionString))
 {
     logger.LogError("Connection string 'DefaultConnection' not found!");
-    logger.LogError("Environment variable ConnectionStrings__DefaultConnection: {EnvVar}", 
-        Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") ?? "null");
-    logger.LogError("Configuration ConnectionStrings:DefaultConnection: {Config}", 
-        builder.Configuration.GetConnectionString("DefaultConnection") ?? "null");
+    logger.LogError("Available environment variables with 'Connection': {EnvVars}", 
+        string.Join(", ", Environment.GetEnvironmentVariables().Keys.Cast<string>().Where(k => k.Contains("Connection", StringComparison.OrdinalIgnoreCase))));
     logger.LogError("Available configuration keys: {Keys}", 
         string.Join(", ", builder.Configuration.AsEnumerable().Select(k => k.Key)));
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
