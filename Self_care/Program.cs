@@ -97,18 +97,18 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
-    {
+    // try
+    // {
         var dbContext = services.GetRequiredService<SelfCareDB>();
         dbContext.Database.Migrate();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
-        // Не останавливаем приложение, если миграции не применились
-        // Это позволит приложению запуститься даже если БД недоступна
-    }
+    // }
+    // catch (Exception ex)
+    // {
+    //     var logger = services.GetRequiredService<ILogger<Program>>();
+    //     logger.LogError(ex, "An error occurred while migrating the database.");
+    //     // Не останавливаем приложение, если миграции не применились
+    //     // Это позволит приложению запуститься даже если БД недоступна
+    // }
 }
 
 // CORS configuration - ДОЛЖНО БЫТЬ ПЕРЕД UseAuthentication и UseAuthorization
