@@ -17,6 +17,9 @@ RUN dotnet build "Self_care.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "Self_care.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Копируем миграции в опубликованную папку (если они есть)
+RUN if [ -d "Migrations" ]; then cp -r Migrations /app/publish/; fi
+
 # Этап 3: Финальный образ
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
