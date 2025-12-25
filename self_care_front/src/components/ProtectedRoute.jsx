@@ -6,6 +6,7 @@ export default function ProtectedRoute({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
 
     useEffect(() => {
+      
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('user');
         
@@ -17,6 +18,7 @@ export default function ProtectedRoute({ children }) {
         }
     }, []);
 
+    
     if (isAuthenticated === null) {
         return <div style={{ 
             display: 'flex', 
@@ -27,6 +29,7 @@ export default function ProtectedRoute({ children }) {
             fontSize: '18px'
         }}>Загрузка...</div>;
     }
+
 
     if (!isAuthenticated) {
         return <Navigate to="/auth" replace />;

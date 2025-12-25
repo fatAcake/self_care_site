@@ -1,5 +1,5 @@
 import Header from './Header';
-import './Articles.css';
+import './style/Articles.css';
 
 const articles = [
     {

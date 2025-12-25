@@ -1,0 +1,198 @@
+.breath-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0d2e 0%, #2d1b4e 100%);
+    color: white;
+    padding-bottom: 100px;
+    display: flex;
+    justify-content: center;
+}
+
+.breath-content {
+    max-width: 760px;
+    width: 100%;
+    padding: 32px 20px 48px;
+    font-family: 'Inter', 'Montserrat', system-ui, -apple-system, sans-serif;
+    color: #f4eaff;
+}
+
+.back-button {
+    margin-bottom: 20px;
+    padding: 10px 16px;
+    background: rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    border-radius: 12px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(139, 92, 246, 0.5);
+    border-color: rgba(139, 92, 246, 0.7);
+    transform: translateX(-2px);
+}
+
+.breath-header h1 {
+    margin: 0 0 8px;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: 0.3px;
+}
+
+.breath-header p {
+    margin: 0 0 20px;
+    color: #c9b6ff;
+    font-size: 16px;
+}
+
+.breath-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.breath-controls label {
+    font-weight: 600;
+    color: #e8ddff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.breath-controls select {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(139, 92, 246, 0.3);
+    color: #f4eaff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.breath-controls select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.button-row button {
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(120deg, #7c3aed, #9f6bff);
+    color: #f9f7ff;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
+    font-size: 14px;
+}
+
+.button-row button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.button-row button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(159, 107, 255, 0.35);
+}
+
+.breath-widget {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+.breath-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.breath-visual-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background:
+        conic-gradient(#c48dff var(--progress, 0%), rgba(255, 255, 255, 0.06) 0),
+        radial-gradient(circle at 30% 30%, #b78cff 0%, rgba(183, 140, 255, 0.4) 18%, transparent 35%),
+        radial-gradient(circle, #6c3bf0 0%, #3c1c87 100%);
+    box-shadow: 0 0 0 10px rgba(124, 58, 237, 0.08), 0 12px 30px rgba(0, 0, 0, 0.35);
+    transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+.phase-inhale .breath-visual-circle {
+    transform: scale(1.12);
+    opacity: 1;
+}
+
+.phase-hold .breath-visual-circle {
+    transform: scale(1.05);
+    opacity: 0.95;
+}
+
+.phase-exhale .breath-visual-circle {
+    transform: scale(0.9);
+    opacity: 0.85;
+}
+
+.phase-pause .breath-visual-circle {
+    transform: scale(0.95);
+    opacity: 0.88;
+}
+
+.breath-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.phase-label {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #f8f5ff;
+}
+
+.timer {
+    font-size: 40px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.4px;
+}
+
+.meta {
+    display: flex;
+    gap: 14px;
+    color: #c9b6ff;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+@media (max-width: 720px) {
+    .breath-widget {
+        grid-template-columns: 1fr;
+    }
+
+    .breath-visual-circle {
+        width: 140px;
+        height: 140px;
+    }
+}
+

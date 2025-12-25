@@ -1,5 +1,24 @@
+
+@font-face {
+  font-family: 'Actay Wide';
+  src: url('/fonts/ActayWide-Regular.woff2') format('woff2'),
+       url('/fonts/ActayWide-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Actay Wide';
+  src: url('/fonts/ActayWide-Bold.woff2') format('woff2'),
+       url('/fonts/ActayWide-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Actay Wide', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 

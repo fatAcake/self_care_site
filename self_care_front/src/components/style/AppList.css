@@ -1,0 +1,112 @@
+
+.app-list-page {
+    font-family: 'Actay Wide', system-ui, Avenir, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0d2e 0%, #2d1b4e 100%);
+    color: white;
+    padding-bottom: 100px; 
+    display: flex;
+    justify-content: center;
+}
+
+.app-list-content {
+    max-width: 800px;
+    width: 100%;
+    padding: 32px 20px;
+}
+
+.app-list-header {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.app-list-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.app-list-header p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.app-card {
+    background: rgba(139, 92, 246, 0.3);
+    border: 2px solid rgba(139, 92, 246, 0.4);
+    border-radius: 20px;
+    padding: 32px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-card:hover:not(.coming-soon) {
+    background: rgba(139, 92, 246, 0.5);
+    border-color: rgba(139, 92, 246, 0.7);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3);
+}
+
+.app-card.coming-soon {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.app-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 20px;
+    transition: transform 0.3s ease;
+}
+
+.app-card:hover:not(.coming-soon) .app-icon {
+    transform: scale(1.1);
+}
+
+.app-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: white;
+}
+
+.app-description {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.coming-soon-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .apps-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

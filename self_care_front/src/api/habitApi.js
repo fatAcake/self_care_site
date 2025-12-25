@@ -3,9 +3,11 @@ import { loadToken } from './authApi';
 
 const API_BASE_URL = '/api';
 
+
 const ensureToken = () => {
     loadToken();
 };
+
 
 axios.interceptors.request.use(
     (config) => {
@@ -28,6 +30,7 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
 
 export const getAllHabits = async () => {
     const res = await axios.get(`${API_BASE_URL}/habit/all`);

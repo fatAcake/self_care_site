@@ -1,0 +1,746 @@
+.dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0d2e 0%, #2d1b4e 100%);
+    padding: 20px;
+    padding-bottom: 120px; 
+    color: white;
+    font-family: 'Actay Wide', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.dashboard-content {
+    width: 100%;
+    max-width: 100%;
+}
+
+
+@media (min-width: 768px) {
+    .dashboard-content {
+        max-width: 420px;
+    }
+}
+.progress-card {
+    background: url('/images/progress-bg.png') center/cover no-repeat;
+    background-color: rgba(107,70,193,0.75);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.progress-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><path d="M0,200 Q100,100 200,150 T400,100 L400,300 L0,300 Z" fill="rgba(255,255,255,0.06)"/></svg>');
+    background-size: cover;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.progress-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.progress-card-header {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-transform: lowercase;
+    opacity: 0.9;
+}
+
+.progress-circle-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.progress-circle {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.progress-circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 8;
+}
+
+.progress-circle-fill {
+    fill: none;
+    stroke: white;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+}
+
+.week-days {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+
+.day-button {
+    flex: 1;
+    aspect-ratio: 1;
+    border-radius: 12px; 
+    background: rgba(139, 92, 246, 0.3);
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-width: 40px;
+    box-shadow: none;
+}
+
+.day-button:hover {
+    background: rgba(139, 92, 246, 0.45);
+    transform: translateY(-3px);
+}
+
+.day-button.active {
+    background: rgba(139, 92, 246, 0.9);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.35);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.add-button {
+    width: 100%;
+    background: rgba(139, 92, 246, 0.6);
+    border: none;
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.add-button:hover {
+    background: rgba(139, 92, 246, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+.add-icon {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.habits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.habit-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+.habit-delete-button {
+    position: absolute;
+    left: 0;
+    width: 72px;
+    height: 100%;
+    background: #e11d48;
+    border: none;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateX(-80px);
+    transition: all 0.25s ease;
+}
+
+
+.habit-move-button {
+    position: absolute;
+    right: 0;
+    width: 72px;
+    height: 100%;
+    background: rgba(139, 92, 246, 0.95);
+    border: none;
+    color: white;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateX(80px);
+    transition: all 0.25s ease;
+    padding: 0 12px;
+    box-sizing: border-box;
+}
+
+.habit-move-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+
+.habit-action {
+    width: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.habit-move-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    width: 72px; 
+    white-space: normal;
+    line-height: 1.05;
+    word-break: break-word;
+}
+
+
+.habit-row.swiped-right .habit-delete-button {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+.habit-row.swiped-left .habit-move-button {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+.habit-item {
+    background: rgba(139, 92, 246, 0.4);
+    border-radius: 12px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: background 0.3s ease, transform 0.25s ease;
+    border: 2px solid transparent;
+    width: 100%;
+    position: relative;
+}
+
+
+.habit-row.swiped-right .habit-item {
+    transform: translateX(80px);
+}
+
+.habit-row.swiped-left .habit-item {
+    transform: translateX(-88px); 
+}
+
+.habit-item.marked {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(139, 92, 246, 0.6);
+}
+
+.habit-label {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.7;
+    min-width: 30px;
+}
+
+.habit-name {
+    flex: 1;
+    font-size: 16px;
+}
+
+
+.habit-toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0;
+    box-sizing: border-box;
+    transition: transform 0.12s ease, background 0.12s ease;
+    overflow: visible;
+}
+
+
+.habit-mark {
+    position: absolute;
+    width: 80%; 
+    height: 80%; 
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1.1); 
+    pointer-events: none;
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45)); 
+}
+
+
+.habit-toggle.checked .habit-mark {
+    transform: translate(-50%, -50%) scale(1.18);
+}
+
+
+.habit-toggle.checked {
+    background: transparent;
+    border-color: white;
+}
+
+.habit-toggle:hover {
+    transform: scale(1.03);
+}
+.habit-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.loading,
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    opacity: 0.7;
+    font-size: 16px;
+}
+.dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0d2e 0%, #2d1b4e 100%);
+    padding: 20px;
+    padding-bottom: 120px;
+    color: white;
+    font-family: 'Actay Wide', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.dashboard-content {
+    width: 100%;
+    max-width: 100%; 
+}
+
+
+@media (min-width: 768px) {
+    .dashboard-content {
+        max-width: 420px;
+    }
+}
+.progress-card {
+    background: url('/images/progress-bg.png') center/cover no-repeat;
+    background-color: rgba(107,70,193,0.75);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.progress-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><path d="M0,200 Q100,100 200,150 T400,100 L400,300 L0,300 Z" fill="rgba(255,255,255,0.06)"/></svg>');
+    background-size: cover;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.progress-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.progress-card-header {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-transform: lowercase;
+    opacity: 0.9;
+}
+
+.progress-circle-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+
+.progress-circle {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.progress-circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 8;
+}
+
+.progress-circle-fill {
+    fill: none;
+    stroke: white;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+}
+
+.week-days {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+
+.day-button {
+    flex: 1;
+    aspect-ratio: 1;
+    border-radius: 12px; 
+    background: rgba(139, 92, 246, 0.3);
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-width: 40px;
+    box-shadow: none;
+}
+
+.day-button:hover {
+    background: rgba(139, 92, 246, 0.45);
+    transform: translateY(-3px);
+}
+
+.day-button.active {
+    background: rgba(139, 92, 246, 0.9);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.35);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.add-button {
+    width: 100%;
+    background: rgba(139, 92, 246, 0.6);
+    border: none;
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.add-button:hover {
+    background: rgba(139, 92, 246, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+.add-icon {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.habits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.habit-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+.habit-delete-button {
+    position: absolute;
+    left: 0;
+    width: 72px;
+    height: 100%;
+    background: #e11d48;
+    border: none;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateX(-80px);
+    transition: all 0.25s ease;
+}
+
+
+.habit-move-button {
+    position: absolute;
+    right: 0;
+    width: 72px;
+    height: 100%;
+    background: rgba(139, 92, 246, 0.95);
+    border: none;
+    color: white;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateX(80px);
+    transition: all 0.25s ease;
+    padding: 0 12px;
+    box-sizing: border-box;
+}
+
+.habit-move-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+
+.habit-action {
+    width: 88px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.habit-move-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    width: 72px; 
+    white-space: normal;
+    line-height: 1.05;
+    word-break: break-word;
+}
+
+
+.habit-row.swiped-right .habit-delete-button {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+.habit-row.swiped-left .habit-move-button {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+.habit-item {
+    background: rgba(139, 92, 246, 0.4);
+    border-radius: 12px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: background 0.3s ease, transform 0.25s ease;
+    border: 2px solid transparent;
+    width: 100%;
+    position: relative;
+}
+
+
+.habit-row.swiped-right .habit-item {
+    transform: translateX(80px);
+}
+
+.habit-row.swiped-left .habit-item {
+    transform: translateX(-88px);
+}
+
+.habit-item.marked {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(139, 92, 246, 0.6);
+}
+
+.habit-label {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.7;
+    min-width: 30px;
+}
+
+.habit-name {
+    flex: 1;
+    font-size: 16px;
+}
+
+
+.habit-toggle {
+    width: 36px; 
+    height: 36px; 
+    border-radius: 50%;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0;
+    box-sizing: border-box;
+    transition: transform 0.12s ease, background 0.12s ease;
+    overflow: visible;
+}
+
+
+.habit-mark {
+    position: absolute;
+    width: 90%; 
+    height: 90%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1.06);
+    pointer-events: none;
+    display: block;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45)); 
+}
+
+
+.habit-toggle.checked .habit-mark {
+    transform: translate(-50%, -50%) scale(1.16);
+}
+
+
+.habit-toggle.checked {
+    background: transparent;
+    border-color: white;
+}
+
+.habit-toggle:hover {
+    transform: scale(1.03);
+}
+.habit-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.loading,
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    opacity: 0.7;
+    font-size: 16px;
+}

@@ -1,8 +1,7 @@
-﻿
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { login, register, setAuthToken } from '../api/authApi';
 import { useNavigate } from 'react-router-dom';
-import './AuthPage.css'; 
+import './style/AuthPage.css';
 
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true); 
@@ -13,6 +12,7 @@ export default function AuthPage() {
         timezone: 'UTC' 
     });
     const navigate = useNavigate();
+
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -50,7 +50,7 @@ export default function AuthPage() {
                     timezone: form.timezone
                 });
                 alert('Регистрация успешна! Пожалуйста, войдите.');
-                setIsLogin(true);
+                setIsLogin(true); 
             }
         } catch (err) {
             alert(err.response?.data?.message || err.response?.data || 'Произошла ошибка');

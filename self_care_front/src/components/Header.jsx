@@ -1,6 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { setAuthToken } from '../api/authApi';
-import './Header.css';
+import './style/Header.css';
+import libIcon from '../assets/lib.svg';
+import appiIcon from '../assets/appi.svg';
 
 export default function Header() {
     const navigate = useNavigate();
@@ -35,14 +37,14 @@ export default function Header() {
                         onClick={() => navigate('/articles')}
                         aria-label="Статьи"
                     >
-                        <span className="icon-book" />
+                        <img src={libIcon} alt="Статьи" className="nav-icon" />
                     </button>
                     <button
                         className={`nav-icon-button ${isActive('/app') ? 'active' : ''}`}
                         onClick={() => navigate('/app')}
                         aria-label="Приложение"
                     >
-                        <span className="icon-grid" />
+                        <img src={appiIcon} alt="Приложения" className="nav-icon" />
                     </button>
                 </nav>
 

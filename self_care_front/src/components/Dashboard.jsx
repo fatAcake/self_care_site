@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { getUserHabits, getProgress, toggleHabit, deleteUserHabit } from '../api/habitApi';
+import { getUserHabits, getProgress, toggleHabit, deleteUserHabit, addHabitToUser } from '../api/habitApi';
 import { loadToken } from '../api/authApi';
 import AddHabitModal from './AddHabitModal';
 import Header from './Header';
-import './Dashboard.css?v=1.1';
+import './style/Dashboard.css';
+import mark from '../assets/mark.svg';
+import arrow from '../assets/arrow.svg';
+import trash from '../assets/trash.svg';
 
 export default function Dashboard() {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -12,6 +15,7 @@ export default function Dashboard() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [swipedHabitId, setSwipedHabitId] = useState(null);
+    const [swipedLeftHabitId, setSwipedLeftHabitId] = useState(null); 
     const [dragStartX, setDragStartX] = useState(null);
 
     useEffect(() => {
@@ -19,10 +23,10 @@ export default function Dashboard() {
     }, []);
 
     const weekDays = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
-    
+
     const getDayOfWeek = (date) => {
         const day = date.getDay();
-        return day === 0 ? 6 : day - 1; 
+        return day === 0 ? 6 : day - 1;
     };
 
     const selectedDayIndex = getDayOfWeek(selectedDate);
@@ -53,7 +57,9 @@ export default function Dashboard() {
         }
     };
 
-    useEffect(() => {loadData();}, [selectedDate] );
+    useEffect(() => {
+        loadData();
+    }, [selectedDate]);
 
     const handleDayClick = (dayIndex) => {
         const date = getDateForDay(dayIndex);
@@ -86,7 +92,22 @@ export default function Dashboard() {
         }
     };
 
-    const handleTouchStart = (e) => {
+    const handleMoveHabitNextDay = async (habit) => {
+        try {
+            const nextDate = new Date(selectedDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+   
+            await addHabitToUser(habit.habitId, nextDate);
+            setSwipedLeftHabitId(null);
+            await loadData();
+        } catch (error) {
+            console.error('Error moving habit:', error);
+            const msg = error?.response?.data?.error || 'Ошибка при переносе привычки';
+            alert(msg);
+        }
+    };
+
+    const handleTouchStart = (e, habitId) => {
         const touch = e.touches[0];
         e.currentTarget.dataset.startX = touch.clientX;
         setDragStartX(touch.clientX);
@@ -99,13 +120,17 @@ export default function Dashboard() {
 
         if (diff > 40) {
             setSwipedHabitId(habitId);
-        }
-        if (diff < -10 && swipedHabitId === habitId) {
+            setSwipedLeftHabitId(null);
+        } else if (diff < -40) {
+            setSwipedLeftHabitId(habitId);
             setSwipedHabitId(null);
+        } else if (Math.abs(diff) < 10) {
+            if (swipedHabitId === habitId) setSwipedHabitId(null);
+            if (swipedLeftHabitId === habitId) setSwipedLeftHabitId(null);
         }
     };
 
-    const handleMouseDown = (e) => {
+    const handleMouseDown = (e, habitId) => {
         setDragStartX(e.clientX);
         e.currentTarget.dataset.mouseDown = 'true';
         e.currentTarget.dataset.startX = e.clientX.toString();
@@ -118,9 +143,13 @@ export default function Dashboard() {
 
         if (diff > 40) {
             setSwipedHabitId(habitId);
-        }
-        if (diff < -10 && swipedHabitId === habitId) {
+            setSwipedLeftHabitId(null);
+        } else if (diff < -40) {
+            setSwipedLeftHabitId(habitId);
             setSwipedHabitId(null);
+        } else if (Math.abs(diff) < 10) {
+            if (swipedHabitId === habitId) setSwipedHabitId(null);
+            if (swipedLeftHabitId === habitId) setSwipedLeftHabitId(null);
         }
     };
 
@@ -129,23 +158,17 @@ export default function Dashboard() {
         setDragStartX(null);
     };
 
-    const progressPercentage = progress.total > 0 
-        ? (progress.completed / progress.total) * 100 
+    const progressPercentage = progress.total > 0
+        ? (progress.completed / progress.total) * 100
         : 0;
 
     return (
         <div className="dashboard">
             <div className="dashboard-content">
                 <div className="progress-card">
-                    <div className="progress-card-header">сегодняшний прогресс</div>
                     <div className="progress-circle-container">
                         <svg className="progress-circle" viewBox="0 0 100 100">
-                            <circle
-                                className="progress-circle-bg"
-                                cx="50"
-                                cy="50"
-                                r="45"
-                            />
+                            <circle className="progress-circle-bg" cx="50" cy="50" r="45" />
                             <circle
                                 className="progress-circle-fill"
                                 cx="50"
@@ -155,9 +178,7 @@ export default function Dashboard() {
                                 strokeDashoffset={`${2 * Math.PI * 45 * (1 - progressPercentage / 100)}`}
                             />
                         </svg>
-                        <div className="progress-text">
-                            {progress.completed}/{progress.total}
-                        </div>
+                        <div className="progress-text">{progress.completed}/{progress.total}</div>
                     </div>
                 </div>
 
@@ -187,7 +208,7 @@ export default function Dashboard() {
                         habits.map((habit, index) => (
                             <div
                                 key={habit.usHabitId}
-                                className={`habit-row ${swipedHabitId === habit.usHabitId ? 'swiped' : ''}`}
+                                className={`habit-row ${swipedHabitId === habit.usHabitId ? 'swiped-right' : ''} ${swipedLeftHabitId === habit.usHabitId ? 'swiped-left' : ''}`}
                                 onTouchStart={(e) => handleTouchStart(e, habit.usHabitId)}
                                 onTouchMove={(e) => handleTouchMove(e, habit.usHabitId)}
                                 onMouseDown={(e) => handleMouseDown(e, habit.usHabitId)}
@@ -199,23 +220,40 @@ export default function Dashboard() {
                                     className="habit-delete-button"
                                     onClick={() => handleDeleteHabit(habit.usHabitId)}
                                 >
-                                    🗑
+                                    <img src={trash} alt="Удалить" />
                                 </button>
-                                <div
-                                    className={`habit-item ${habit.isMarked ? 'marked' : ''}`}
+
+                                <button
+                                    className="habit-move-button"
+                                    onClick={() => handleMoveHabitNextDay(habit)}
+                                    aria-label="Перенести на следующий день"
                                 >
-                                    <span className="habit-label">#{index + 1}</span>
+                                    <img src={arrow} alt="" className="habit-move-icon" aria-hidden="true" />
+                                </button>
+
+                                <div className={`habit-item ${habit.isMarked ? 'marked' : ''}`}>
                                     <span className="habit-name">{habit.habitName}</span>
-                                    <button
-                                        className={`habit-toggle ${habit.isMarked ? 'checked' : ''}`}
-                                        onClick={() => handleToggleHabit(habit.usHabitId)}
-                                    >
-                                        {habit.isMarked ? (
-                                            <span className="check-icon">✓</span>
+
+                                    <div className="habit-action">
+                                        {swipedLeftHabitId === habit.usHabitId ? (
+                                            <div className="habit-move-column" onClick={() => handleMoveHabitNextDay(habit)} role="button" tabIndex={0}>
+                                                <span>Перенести</span>
+                                                <span>на следующий день</span>
+                                            </div>
                                         ) : (
-                                            <span className="circle-icon">○</span>
+                                            <button
+                                                className={`habit-toggle ${habit.isMarked ? 'checked' : ''}`}
+                                                onClick={() => handleToggleHabit(habit.usHabitId)}
+                                                aria-pressed={habit.isMarked}
+                                                aria-label={habit.isMarked ? 'Отмечено' : 'Не отмечено'}
+                                            >
+                                                {habit.isMarked && (
+                                                    <img src={mark} alt="" className="habit-mark" aria-hidden="true" />
+                                                )}
+                                                <span className="sr-only">{habit.isMarked ? 'Отмечено' : 'Не отмечено'}</span>
+                                            </button>
                                         )}
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
                         ))
@@ -230,7 +268,7 @@ export default function Dashboard() {
                     />
                 )}
             </div>
-            
+
             <Header />
         </div>
     );

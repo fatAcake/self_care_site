@@ -5,11 +5,12 @@ import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
 import Articles from './components/Articles';
 import AppPage from './components/AppPage';
+import BreathingPractice from './components/BreathingPractice';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
     useEffect(() => {
-        loadToken(); 
+        loadToken();
     }, []);
 
     return (
@@ -37,6 +38,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <AppPage />
+                        </ProtectedRoute>
+                    } 
+                />
+                <Route 
+                    path="/app/breathing" 
+                    element={
+                        <ProtectedRoute>
+                            <BreathingPractice />
                         </ProtectedRoute>
                     } 
                 />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllHabits, addHabitToUser, createHabit } from '../api/habitApi';
-import './AddHabitModal.css';
+import './style/AddHabitModal.css';
 
 export default function AddHabitModal({ selectedDate, onClose, onHabitAdded }) {
     const [habits, setHabits] = useState([]);
@@ -35,6 +35,7 @@ export default function AddHabitModal({ selectedDate, onClose, onHabitAdded }) {
         e.preventDefault();
         
         if (isCreatingNew) {
+            
             try {
                 setSubmitting(true);
                 const newHabit = await createHabit(newHabitName, newHabitDescription);
@@ -47,6 +48,7 @@ export default function AddHabitModal({ selectedDate, onClose, onHabitAdded }) {
                 setSubmitting(false);
             }
         } else {
+            
             if (!selectedHabitId) {
                 alert('Выберите привычку');
                 return;
@@ -73,6 +75,7 @@ export default function AddHabitModal({ selectedDate, onClose, onHabitAdded }) {
                 <h2 className="modal-title">Добавить привычку</h2>
 
                 <form onSubmit={handleSubmit}>
+                   
                     <div className="modal-tabs">
                         <button
                             type="button"
@@ -91,6 +94,7 @@ export default function AddHabitModal({ selectedDate, onClose, onHabitAdded }) {
                     </div>
 
                     {isCreatingNew ? (
+                        
                         <div className="form-section">
                             <div className="form-group">
                                 <label>Название привычки</label>
@@ -113,6 +117,7 @@ export default function AddHabitModal({ selectedDate, onClose, onHabitAdded }) {
                             </div>
                         </div>
                     ) : (
+                        
                         <div className="form-section">
                             <div className="form-group">
                                 <label>Выберите привычку</label>
@@ -141,6 +146,7 @@ export default function AddHabitModal({ selectedDate, onClose, onHabitAdded }) {
                         </div>
                     )}
 
+                    
                     <div className="form-group">
                         <label>Дата выполнения</label>
                         <input
