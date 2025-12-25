@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Self_care.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace Self_care.Data;
 
@@ -31,9 +32,33 @@ public partial class SelfCareDB : DbContext
     public virtual DbSet<UserHabit> UserHabits { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=self_careDB;Username=postgres;Password=1234");
-    //Вечером или ночью уберу этот хардкод
+    {
+        // Connection string должна быть настроена через DI в Program.cs
+        // Этот метод вызывается только если опции не были переданы через конструктор
+        // В production используйте переменную окружения ConnectionStrings__DefaultConnection
+        
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Проверяем окружение - fallback только для Development
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") 
+                ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") 
+                ?? "Production";
+            
+            if (environment == "Development")
+            {
+                // Fallback только для локальной разработки
+                optionsBuilder.UseNpgsql("Host=localhost;Database=self_careDB;Username=postgres;Password=1234");
+            }
+            else
+            {
+                // В production опции ВСЕГДА должны быть настроены через AddDbContext в Program.cs
+                throw new InvalidOperationException(
+                    "DbContext options are not configured. " +
+                    "In production, ensure ConnectionStrings__DefaultConnection environment variable is set. " +
+                    "DbContext must be registered via AddDbContext in Program.cs");
+            }
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
