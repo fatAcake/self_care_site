@@ -78,7 +78,7 @@ export default function AuthPage() {
 
             <form onSubmit={handleSubmit} className="auth-form">
                 <div className="input-group">
-                    <span className="icon">✉️</span>
+                    <span className="icon"></span>
                     <input
                         name="email"
                         type="email"
