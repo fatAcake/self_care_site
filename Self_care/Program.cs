@@ -120,8 +120,8 @@ if (allowedOrigins.Length == 0)
 }
 
 // Логирование для отладки CORS
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-logger.LogInformation("CORS: Allowed origins: {Origins}", string.Join(", ", allowedOrigins));
+var loggere = app.Services.GetRequiredService<ILogger<Program>>();
+loggere.LogInformation("CORS: Allowed origins: {Origins}", string.Join(", ", allowedOrigins));
 
 app.UseCors(policy => policy
     .WithOrigins(allowedOrigins)
