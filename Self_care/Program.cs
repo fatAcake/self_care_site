@@ -210,6 +210,25 @@ using (var scope = app.Services.CreateScope())
     {
         var dbContext = services.GetRequiredService<SelfCareDB>();
         dbContext.Database.Migrate();
+        
+        // Убеждаемся что начальная роль "user" существует
+        // Это защита от случаев когда миграция была применена до добавления seed данных
+        var roleExists = dbContext.Roles.Any(r => r.RoleId == 1);
+        if (!roleExists)
+        {
+            var initialRole = new Self_care.Models.Role
+            {
+                RoleId = 1,
+                Name = "user",
+                Privilege = "read",
+                CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                Deleted = false
+            };
+            dbContext.Roles.Add(initialRole);
+            dbContext.SaveChanges();
+            var loggerSeed = services.GetRequiredService<ILogger<Program>>();
+            loggerSeed.LogInformation("Created initial 'user' role with id=1");
+        }
     }
     catch (Exception ex)
     {
