@@ -87,6 +87,15 @@
     margin-right: 0.75rem;
     font-size: 1.2rem;
     color: #d9b3ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
 }
 
 .input-group input {
