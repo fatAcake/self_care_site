@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { login, register, setAuthToken } from '../api/authApi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './style/AuthPage.css';
 import emailIcon from '../assets/email-icon.svg';
 import passwordIcon from '../assets/password-icon.svg';
@@ -15,15 +15,19 @@ export default function AuthPage() {
         timezone: 'UTC' 
     });
     const navigate = useNavigate();
+    const location = useLocation();
 
+    // Получаем путь, с которого пользователь был перенаправлен, или null
+    const from = location.state?.from || null;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('user');
         if (token && user) {
-            navigate('/dashboard');
+            // Если есть сохраненный путь, редиректим туда, иначе на dashboard
+            navigate(from || '/dashboard', { replace: true });
         }
-    }, [navigate]);
+    }, [navigate, from]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,7 +48,8 @@ export default function AuthPage() {
                     email: data.email,
                     timezone: data.timezone
                 }));
-                navigate('/dashboard');
+                // Редиректим на страницу, с которой пришел пользователь, или на dashboard
+                navigate(from || '/dashboard', { replace: true });
             } else {
                 await register({
                     nickname: form.nickname,

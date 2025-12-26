@@ -1,9 +1,10 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { loadToken } from '../api/authApi';
 
 export default function ProtectedRoute({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const location = useLocation();
 
     useEffect(() => {
       
@@ -32,7 +33,8 @@ export default function ProtectedRoute({ children }) {
 
 
     if (!isAuthenticated) {
-        return <Navigate to="/auth" replace />;
+        // Сохраняем текущий путь для редиректа после авторизации
+        return <Navigate to="/auth" state={{ from: location.pathname }} replace />;
     }
 
     return children;
