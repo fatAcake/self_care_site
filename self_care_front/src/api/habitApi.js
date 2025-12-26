@@ -2,6 +2,8 @@ import axios from 'axios';
 import { loadToken } from './authApi';
 import { API_BASE_URL } from '../config';
 
+// Настраиваем базовый URL для axios
+axios.defaults.baseURL = '';
 
 const ensureToken = () => {
     loadToken();
@@ -21,6 +23,23 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     (response) => response,
     (error) => {
+        // Логирование ошибок для отладки
+        if (error.response) {
+            console.error('API Error:', {
+                status: error.response.status,
+                url: error.config?.url,
+                method: error.config?.method,
+                message: error.response.data
+            });
+        } else if (error.request) {
+            console.error('API Request Error:', {
+                url: error.config?.url,
+                message: 'No response received. Is the backend running?'
+            });
+        } else {
+            console.error('API Error:', error.message);
+        }
+
         if (error.response?.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
