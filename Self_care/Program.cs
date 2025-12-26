@@ -144,6 +144,25 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<TokenService>();
 
+// CORS configuration - добавляем в services
+var frontendUrl = builder.Configuration["FRONTEND_URL"] ?? "http://localhost:5173";
+var allowedOrigins = frontendUrl.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+if (allowedOrigins.Length == 0)
+{
+    allowedOrigins = new[] { frontendUrl };
+}
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -176,6 +195,13 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 var app = builder.Build();
 
+// CORS должен быть ПЕРВЫМ в pipeline, чтобы заголовки добавлялись даже при ошибках
+app.UseCors();
+
+// Логирование для отладки CORS
+var corsLogger = app.Services.GetRequiredService<ILogger<Program>>();
+corsLogger.LogInformation("CORS: Allowed origins: {Origins}", string.Join(", ", allowedOrigins));
+
 // Автоматическое применение миграций при старте (для Render без Shell)
 using (var scope = app.Services.CreateScope())
 {
@@ -193,24 +219,6 @@ using (var scope = app.Services.CreateScope())
         // Это позволит приложению запуститься даже если БД недоступна
     }
 }
-
-// CORS configuration - ДОЛЖНО БЫТЬ ПЕРЕД UseAuthentication и UseAuthorization
-var frontendUrl = builder.Configuration["FRONTEND_URL"] ?? "http://localhost:5173";
-var allowedOrigins = frontendUrl.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-if (allowedOrigins.Length == 0)
-{
-    allowedOrigins = new[] { frontendUrl };
-}
-
-// Логирование для отладки CORS
-var loggerу = app.Services.GetRequiredService<ILogger<Program>>();
-loggerу.LogInformation("CORS: Allowed origins: {Origins}", string.Join(", ", allowedOrigins));
-
-app.UseCors(policy => policy
-    .WithOrigins(allowedOrigins)
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowCredentials());
 
 if (app.Environment.IsDevelopment())
 {
