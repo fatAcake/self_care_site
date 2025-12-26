@@ -2,6 +2,9 @@
 import { login, register, setAuthToken } from '../api/authApi';
 import { useNavigate } from 'react-router-dom';
 import './style/AuthPage.css';
+import emailIcon from '../assets/email-icon.svg';
+import passwordIcon from '../assets/password-icon.svg';
+import userIcon from '../assets/user-icon.svg';
 
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true); 
@@ -78,7 +81,9 @@ export default function AuthPage() {
 
             <form onSubmit={handleSubmit} className="auth-form">
                 <div className="input-group">
-                    <span className="icon"></span>
+                    <span className="icon">
+                        <img src={emailIcon} alt="Email" />
+                    </span>
                     <input
                         name="email"
                         type="email"
@@ -90,7 +95,9 @@ export default function AuthPage() {
                 </div>
 
                 <div className="input-group">
-                    <span className="icon"></span>
+                    <span className="icon">
+                        <img src={passwordIcon} alt="Password" />
+                    </span>
                     <input
                         name="password"
                         type="password"
@@ -103,7 +110,9 @@ export default function AuthPage() {
 
                 {!isLogin && (
                     <div className="input-group">
-                        <span className="icon"></span>
+                        <span className="icon">
+                            <img src={userIcon} alt="User" />
+                        </span>
                         <input
                             name="nickname"
                             placeholder="Имя пользователя..."
