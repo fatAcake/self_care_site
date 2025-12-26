@@ -51,23 +51,67 @@ logger.LogInformation("Using ConnectionString: {ConnectionString}", safeConnecti
 logger.LogInformation("ConnectionString source: {Source}", 
     Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") != null ? "Environment Variable" : "Configuration");
 
-// Если ConnectionString в формате URL без порта, добавляем порт
-if (connectionString.StartsWith("postgresql://") && !connectionString.Contains(":5432") && !connectionString.Contains("?"))
+// Преобразование ConnectionString из URL формата в key-value формат для Npgsql
+if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
 {
-    var atIndex = connectionString.IndexOf("@");
-    var slashIndex = connectionString.IndexOf("/", atIndex);
-    if (atIndex > 0 && slashIndex > atIndex)
+    try
     {
-        connectionString = connectionString.Insert(slashIndex, ":5432");
-        logger.LogInformation("Added port 5432 to ConnectionString");
+        logger.LogInformation("Converting PostgreSQL URL format to connection string format");
+        
+        // Убираем префикс
+        var url = connectionString.Replace("postgresql://", "").Replace("postgres://", "");
+        
+        // Парсим URL
+        var parts = url.Split('@');
+        if (parts.Length != 2)
+        {
+            throw new FormatException("Invalid PostgreSQL URL format");
+        }
+        
+        var userPass = parts[0].Split(':');
+        var username = userPass[0];
+        var password = userPass.Length > 1 ? userPass[1] : "";
+        
+        var hostDb = parts[1].Split('?')[0]; // Убираем query параметры
+        var hostPortDb = hostDb.Split('/');
+        var hostPort = hostPortDb[0].Split(':');
+        var host = hostPort[0];
+        var port = hostPort.Length > 1 ? hostPort[1] : "5432";
+        var database = hostPortDb.Length > 1 ? hostPortDb[1] : "";
+        
+        // Извлекаем параметры из query string
+        var sslMode = "Require";
+        if (parts[1].Contains("?"))
+        {
+            var queryString = parts[1].Split('?')[1];
+            var queryParams = queryString.Split('&');
+            foreach (var param in queryParams)
+            {
+                if (param.StartsWith("sslmode=", StringComparison.OrdinalIgnoreCase))
+                {
+                    var sslValue = param.Substring("sslmode=".Length).Trim();
+                    if (!string.IsNullOrEmpty(sslValue))
+                    {
+                        // Преобразуем в правильный формат
+                        sslMode = sslValue.Equals("require", StringComparison.OrdinalIgnoreCase) ? "Require" :
+                                  sslValue.Equals("prefer", StringComparison.OrdinalIgnoreCase) ? "Prefer" :
+                                  sslValue.Equals("disable", StringComparison.OrdinalIgnoreCase) ? "Disable" :
+                                  "Require";
+                    }
+                }
+            }
+        }
+        
+        // Создаем connection string в формате key-value
+        connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode={sslMode}";
+        
+        logger.LogInformation("Successfully converted URL to connection string format");
     }
-}
-
-// Если ConnectionString в формате URL без sslmode, добавляем его
-if (connectionString.StartsWith("postgresql://") && !connectionString.Contains("sslmode="))
-{
-    connectionString += (connectionString.Contains("?") ? "&" : "?") + "sslmode=require";
-    logger.LogInformation("Added sslmode=require to ConnectionString");
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Error converting PostgreSQL URL to connection string format. Using original string.");
+        // Если не удалось преобразовать, используем исходную строку
+    }
 }
 
 builder.Services.AddDbContext<SelfCareDB>(options =>
