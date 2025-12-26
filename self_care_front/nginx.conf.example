@@ -1,0 +1,18 @@
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /var/www/selfcare-frontend/dist;
+    index index.html;
+
+    # SPA routing - все запросы перенаправляются на index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Кэширование статических файлов
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+

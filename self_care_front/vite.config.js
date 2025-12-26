@@ -13,6 +13,7 @@ export default defineConfig({
         secure: false
       }
     }
+    // Vite автоматически поддерживает SPA routing в dev режиме
   },
   // Для production сборки
   build: {
@@ -25,9 +26,12 @@ export default defineConfig({
       }
     }
   },
-  // Fallback для SPA routing
+  // Fallback для SPA routing в preview режиме
   preview: {
     port: 4173,
     strictPort: true
-  }
+  },
+  // Плагин для обработки SPA routing в dev режиме
+  // Vite уже поддерживает это по умолчанию, но явно указываем
+  appType: 'spa'
 })
