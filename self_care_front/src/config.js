@@ -13,3 +13,8 @@ export const API_BASE_URL = apiBaseUrl;
 export const isDevelopment = import.meta.env.DEV;
 export const isProduction = import.meta.env.PROD;
 
+// Логирование для отладки (только в dev режиме)
+if (isDevelopment) {
+    console.log('API Base URL:', API_BASE_URL);
+}
+
