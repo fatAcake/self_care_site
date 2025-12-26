@@ -2,7 +2,7 @@ import axios from 'axios';
 import { loadToken } from './authApi';
 import { API_BASE_URL } from '../config';
 
-// Настраиваем базовый URL для axios
+
 axios.defaults.baseURL = '';
 
 const ensureToken = () => {
@@ -23,7 +23,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Логирование ошибок для отладки
+     
         if (error.response) {
             console.error('API Error:', {
                 status: error.response.status,

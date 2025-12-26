@@ -15,11 +15,11 @@ var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
     ?? throw new InvalidOperationException("JWT configuration section is missing.");
 
 
-// Получаем ConnectionString - сначала из переменной окружения, потом из конфигурации
+
 var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
 var logger = loggerFactory.CreateLogger<Program>();
 
-// Логируем все переменные окружения, связанные с ConnectionStrings
+
 var envVar = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 var configVar = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -41,7 +41,7 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 }
 
-// Логируем ConnectionString (без пароля для безопасности)
+
 var safeConnectionString = connectionString.Contains("Password=") 
     ? connectionString.Substring(0, connectionString.IndexOf("Password=")) + "Password=***"
     : (connectionString.Contains("@") 
@@ -51,17 +51,17 @@ logger.LogInformation("Using ConnectionString: {ConnectionString}", safeConnecti
 logger.LogInformation("ConnectionString source: {Source}", 
     Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") != null ? "Environment Variable" : "Configuration");
 
-// Преобразование ConnectionString из URL формата в key-value формат для Npgsql
+
 if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith("postgres://"))
 {
     try
     {
         logger.LogInformation("Converting PostgreSQL URL format to connection string format");
         
-        // Убираем префикс
+        
         var url = connectionString.Replace("postgresql://", "").Replace("postgres://", "");
         
-        // Парсим URL
+      
         var parts = url.Split('@');
         if (parts.Length != 2)
         {
@@ -72,14 +72,14 @@ if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith(
         var username = userPass[0];
         var password = userPass.Length > 1 ? userPass[1] : "";
         
-        var hostDb = parts[1].Split('?')[0]; // Убираем query параметры
+        var hostDb = parts[1].Split('?')[0];
         var hostPortDb = hostDb.Split('/');
         var hostPort = hostPortDb[0].Split(':');
         var host = hostPort[0];
         var port = hostPort.Length > 1 ? hostPort[1] : "5432";
         var database = hostPortDb.Length > 1 ? hostPortDb[1] : "";
         
-        // Извлекаем параметры из query string
+        
         var sslMode = "Require";
         if (parts[1].Contains("?"))
         {
@@ -92,7 +92,7 @@ if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith(
                     var sslValue = param.Substring("sslmode=".Length).Trim();
                     if (!string.IsNullOrEmpty(sslValue))
                     {
-                        // Преобразуем в правильный формат
+                      
                         sslMode = sslValue.Equals("require", StringComparison.OrdinalIgnoreCase) ? "Require" :
                                   sslValue.Equals("prefer", StringComparison.OrdinalIgnoreCase) ? "Prefer" :
                                   sslValue.Equals("disable", StringComparison.OrdinalIgnoreCase) ? "Disable" :
@@ -102,7 +102,7 @@ if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith(
             }
         }
         
-        // Создаем connection string в формате key-value
+        
         connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode={sslMode}";
         
         logger.LogInformation("Successfully converted URL to connection string format");
@@ -110,7 +110,7 @@ if (connectionString.StartsWith("postgresql://") || connectionString.StartsWith(
     catch (Exception ex)
     {
         logger.LogError(ex, "Error converting PostgreSQL URL to connection string format. Using original string.");
-        // Если не удалось преобразовать, используем исходную строку
+        
     }
 }
 
@@ -144,7 +144,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<TokenService>();
 
-// CORS configuration - добавляем в services
+
 var frontendUrl = builder.Configuration["FRONTEND_URL"] ?? "http://localhost:5173";
 var allowedOrigins = frontendUrl.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 if (allowedOrigins.Length == 0)
@@ -195,14 +195,14 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 var app = builder.Build();
 
-// CORS должен быть ПЕРВЫМ в pipeline, чтобы заголовки добавлялись даже при ошибках
+
 app.UseCors();
 
-// Логирование для отладки CORS
+
 var corsLogger = app.Services.GetRequiredService<ILogger<Program>>();
 corsLogger.LogInformation("CORS: Allowed origins: {Origins}", string.Join(", ", allowedOrigins));
 
-// Автоматическое применение миграций при старте (для Render без Shell)
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -211,8 +211,7 @@ using (var scope = app.Services.CreateScope())
         var dbContext = services.GetRequiredService<SelfCareDB>();
         dbContext.Database.Migrate();
         
-        // Убеждаемся что начальная роль "user" существует
-        // Это защита от случаев когда миграция была применена до добавления seed данных
+
         var roleExists = dbContext.Roles.Any(r => r.RoleId == 1);
         if (!roleExists)
         {
@@ -234,8 +233,7 @@ using (var scope = app.Services.CreateScope())
     {
         var loggeres = services.GetRequiredService<ILogger<Program>>();
         loggeres.LogError(ex, "An error occurred while migrating the database.");
-        // Не останавливаем приложение, если миграции не применились
-        // Это позволит приложению запуститься даже если БД недоступна
+
     }
 }
 

@@ -33,25 +33,23 @@ public partial class SelfCareDB : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // Connection string должна быть настроена через DI в Program.cs
-        // Этот метод вызывается только если опции не были переданы через конструктор
-        // В production используйте переменную окружения ConnectionStrings__DefaultConnection
+        
         
         if (!optionsBuilder.IsConfigured)
         {
-            // Проверяем окружение - fallback только для Development
+           
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") 
                 ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") 
                 ?? "Production";
             
             if (environment == "Development")
             {
-                // Fallback только для локальной разработки
+               
                 optionsBuilder.UseNpgsql("Host=localhost;Database=self_careDB;Username=postgres;Password=1234");
             }
             else
             {
-                // В production опции ВСЕГДА должны быть настроены через AddDbContext в Program.cs
+                
                 throw new InvalidOperationException(
                     "DbContext options are not configured. " +
                     "In production, ensure ConnectionStrings__DefaultConnection environment variable is set. " +
