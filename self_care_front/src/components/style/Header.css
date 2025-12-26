@@ -1,0 +1,145 @@
+.app-header {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(45, 27, 78, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(139, 92, 246, 0.3);
+    z-index: 1000;
+    padding: 0;
+    font-family: 'Actay Wide', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.header-content {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+}
+
+.header-nav {
+    display: flex;
+    gap: 32px;
+}
+
+
+.nav-icon-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(139, 92, 246, 0.25);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.20s ease;
+    padding: 0;
+}
+
+.nav-icon-button:hover {
+    background: rgba(139, 92, 246, 0.35);
+    transform: translateY(-2px);
+}
+
+.nav-icon-button.active {
+    background: rgba(139, 92, 246, 0.9);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+}
+
+
+.icon-square,
+.icon-book,
+.icon-grid {
+    display: block;
+    width: 20px;
+    height: 20px;
+    position: relative;
+}
+
+
+.icon-square {
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.icon-book::before,
+.icon-book::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    width: 8px;
+    border-radius: 3px;
+    background: white;
+}
+
+.icon-book::before {
+    left: 2px;
+}
+
+.icon-book::after {
+    right: 2px;
+}
+
+
+.icon-grid::before,
+.icon-grid::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: white;
+}
+
+.icon-grid::before {
+    top: 3px;
+    left: 3px;
+    box-shadow: 9px 0 0 0 white;
+}
+
+.icon-grid::after {
+    bottom: 3px;
+    left: 3px;
+    box-shadow: 9px 0 0 0 white;
+}
+
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+}
+
+
+.logout-chip {
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(15, 23, 42, 0.7);
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    opacity: 0.9;
+    transition: all 0.25s ease;
+}
+
+.logout-chip:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        gap: 20px;
+    }
+}
+
