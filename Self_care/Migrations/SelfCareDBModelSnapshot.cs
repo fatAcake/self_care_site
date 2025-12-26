@@ -89,7 +89,7 @@ namespace Self_care.Migrations
 
                     b.HasIndex(new[] { "PublishedAt" }, "idx_articles_published_at");
 
-                    b.ToTable("articles");
+                    b.ToTable("articles", (string)null);
                 });
 
             modelBuilder.Entity("Self_care.Models.Habit", b =>
@@ -140,7 +140,7 @@ namespace Self_care.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "fki_user_id_fkey");
 
-                    b.ToTable("habits");
+                    b.ToTable("habits", (string)null);
                 });
 
             modelBuilder.Entity("Self_care.Models.HabitLog", b =>
@@ -191,7 +191,7 @@ namespace Self_care.Migrations
 
                     b.HasIndex(new[] { "UserHabitId" }, "idx_habit_logs_user_habit_id");
 
-                    b.ToTable("habit_logs");
+                    b.ToTable("habit_logs", (string)null);
                 });
 
             modelBuilder.Entity("Self_care.Models.Role", b =>
@@ -237,7 +237,7 @@ namespace Self_care.Migrations
                     b.HasKey("RoleId")
                         .HasName("roles_pkey");
 
-                    b.ToTable("roles");
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("Self_care.Models.Session", b =>
@@ -304,7 +304,7 @@ namespace Self_care.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "idx_sessions_user_id");
 
-                    b.ToTable("sessions");
+                    b.ToTable("sessions", (string)null);
                 });
 
             modelBuilder.Entity("Self_care.Models.User", b =>
@@ -378,7 +378,7 @@ namespace Self_care.Migrations
                     b.HasIndex(new[] { "Email" }, "users_email_key")
                         .IsUnique();
 
-                    b.ToTable("users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Self_care.Models.UserHabit", b =>
@@ -453,7 +453,7 @@ namespace Self_care.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "idx_user_habits_user_id");
 
-                    b.ToTable("user_habits");
+                    b.ToTable("user_habits", (string)null);
                 });
 
             modelBuilder.Entity("Self_care.Models.Habit", b =>

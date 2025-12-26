@@ -52,6 +52,13 @@ namespace Self_care.Migrations
                     table.PrimaryKey("roles_pkey", x => x.role_id);
                 });
 
+            // Вставляем начальную роль "user" с id=1
+            migrationBuilder.Sql(@"
+                INSERT INTO roles (role_id, name, privilege, created_at, deleted)
+                SELECT 1, 'user', 'read', now(), false
+                WHERE NOT EXISTS (SELECT 1 FROM roles WHERE role_id = 1);
+            ");
+
             migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
