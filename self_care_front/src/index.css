@@ -1,8 +1,12 @@
 
+/* Actay Wide font - поддерживаем WOFF/WOFF2 и OTF форматы */
 @font-face {
   font-family: 'Actay Wide';
-  src: url('/fonts/ActayWide-Regular.woff2') format('woff2'),
-       url('/fonts/ActayWide-Regular.woff') format('woff');
+  src: local('Actay Wide Regular'),
+       url('/fonts/ActayWide-Regular.woff2') format('woff2'),
+       url('/fonts/ActayWide-Regular.woff') format('woff'),
+       url('/fonts/ActayWide-Regular.otf') format('opentype'),
+       url('/fonts/Actay-Regular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -10,8 +14,10 @@
 
 @font-face {
   font-family: 'Actay Wide';
-  src: url('/fonts/ActayWide-Bold.woff2') format('woff2'),
-       url('/fonts/ActayWide-Bold.woff') format('woff');
+  src: local('Actay Wide Bold'),
+       url('/fonts/ActayWide-Bold.woff2') format('woff2'),
+       url('/fonts/ActayWide-Bold.woff') format('woff'),
+       url('/fonts/ActayWide-Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
